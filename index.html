@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+  <meta name="theme-color" content="#080012">
+  <meta name="description"
+        content="Adivina el número en este juego Neon Cyberpunk.">
+
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="style.css">
+
+  <title>Guess the Number — Neon</title>
+</head>
+
+<body>
+  <main class="game-container">
+    <section class="game-card" aria-labelledby="game-title">
+
+      <div class="neon-icon" aria-hidden="true">?</div>
+
+      <p class="eyebrow">NEON // CHALLENGE</p>
+
+      <h1 id="game-title">Adivina el Número</h1>
+
+      <p class="instructions">
+        He elegido un número entre <strong>1 y 100</strong>.
+        ¿Puedes encontrarlo?
+      </p>
+
+      <div class="game-status">
+        <p id="hint" aria-live="polite">
+          Introduce un número para comenzar.
+        </p>
+
+        <p class="attempts">
+          Intentos: <span id="attempts">0</span>
+        </p>
+      </div>
+
+      <form id="guess-form">
+        <label for="guess-input">Tu número</label>
+
+        <div class="input-group">
+          <input
+            id="guess-input"
+            name="guess"
+            type="number"
+            min="1"
+            max="100"
+            inputmode="numeric"
+            autocomplete="off"
+            placeholder="00"
+            required
+            aria-describedby="input-help"
+          >
+
+          <button type="submit" id="guess-button">
+            ADIVINAR
+          </button>
+        </div>
+
+        <small id="input-help">
+          Escribe un número entre 1 y 100.
+        </small>
+      </form>
+
+      <button
+        type="button"
+        id="new-game-button"
+        class="secondary-button"
+      >
+        NUEVA PARTIDA
+      </button>
+
+      <div
+        id="result"
+        class="result"
+        aria-live="assertive"
+        role="status"
+      ></div>
+
+    </section>
+  </main>
+
+  <footer>
+    <span>NEON NUMBER</span>
+    <span>•</span>
+    <span>OFFLINE READY</span>
+  </footer>
+
+  <script src="app.js" defer></script>
+</body>
+</html>
