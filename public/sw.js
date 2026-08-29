@@ -1,5 +1,12 @@
-const CACHE_NAME = "guess-the-number-neon-v2";
-const APP_SHELL = ["/guess-the-number/", "/guess-the-number/index.html", "/guess-the-number/manifest.json"];
+const CACHE_NAME = "neon-guesser-v3";
+const BASE_URL = "/guess-the-number/";
+const APP_SHELL = [
+  BASE_URL,
+  `${BASE_URL}index.html`,
+  `${BASE_URL}manifest.webmanifest`,
+  `${BASE_URL}icons/icon-192.png`,
+  `${BASE_URL}icons/icon-512.png`,
+];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(APP_SHELL)));
@@ -9,7 +16,7 @@ self.addEventListener("install", (event) => {
 self.addEventListener("activate", (event) => {
   event.waitUntil(
     caches.keys().then((keys) => Promise.all(
-      keys.filter((key) => key.startsWith("guess-the-number-neon-") && key !== CACHE_NAME).map((key) => caches.delete(key)),
+      keys.filter((key) => key.startsWith("neon-guesser-") && key !== CACHE_NAME).map((key) => caches.delete(key)),
     )),
   );
   self.clients.claim();
@@ -17,6 +24,19 @@ self.addEventListener("activate", (event) => {
 
 self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") return;
+
+  if (event.request.mode === "navigate") {
+    event.respondWith(
+      fetch(event.request)
+        .then((response) => {
+          const copy = response.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
+          return response;
+        })
+        .catch(() => caches.match(BASE_URL)),
+    );
+    return;
+  }
 
   event.respondWith(
     caches.match(event.request).then((cached) => {
@@ -27,7 +47,7 @@ self.addEventListener("fetch", (event) => {
           caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
         }
         return response;
-      }).catch(() => caches.match("/guess-the-number/"));
+      });
     }),
   );
 });

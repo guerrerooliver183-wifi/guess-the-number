@@ -11,7 +11,7 @@ createRoot(document.getElementById("root")).render(
 
 if ("serviceWorker" in navigator && import.meta.env.PROD) {
   window.addEventListener("load", () => {
-    navigator.serviceWorker.register("/guess-the-number/sw.js").catch(() => {
+    navigator.serviceWorker.register("/guess-the-number/sw.js", { scope: "/guess-the-number/" }).catch(() => {
       // La app sigue funcionando aunque el navegador no permita instalar la PWA.
     });
   });

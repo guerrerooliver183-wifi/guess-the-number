@@ -1,0 +1,29 @@
+{
+  "id": "/guess-the-number/",
+  "name": "Neon Guesser",
+  "short_name": "Neon Guesser",
+  "description": "A neon cyberpunk number guessing game in English and Spanish.",
+  "lang": "en",
+  "start_url": "/guess-the-number/",
+  "scope": "/guess-the-number/",
+  "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone"],
+  "orientation": "portrait",
+  "background_color": "#05020a",
+  "theme_color": "#080012",
+  "categories": ["games", "entertainment"],
+  "icons": [
+    {
+      "src": "/guess-the-number/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/guess-the-number/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
