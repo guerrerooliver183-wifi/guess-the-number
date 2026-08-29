@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import LegalPage from "./LegalPage";
 
 const MIN_NUMBER = 1;
 const MAX_NUMBER = 100;
@@ -42,6 +43,12 @@ const translations = {
     switchLanguage: "Cambiar a inglés",
     switchLanguageBack: "Cambiar a español",
     offlineReady: "OFFLINE READY",
+    termsTitle: "Términos y condiciones",
+    privacyTitle: "Política de privacidad",
+    cookiesTitle: "Política de cookies",
+    termsLink: "Términos",
+    privacyLink: "Privacidad",
+    cookiesLink: "Cookies",
   },
   en: {
     brand: "NEON GUESSER",
@@ -79,6 +86,12 @@ const translations = {
     switchLanguage: "Switch to Spanish",
     switchLanguageBack: "Switch to English",
     offlineReady: "OFFLINE READY",
+    termsTitle: "Terms and conditions",
+    privacyTitle: "Privacy policy",
+    cookiesTitle: "Cookie policy",
+    termsLink: "Terms",
+    privacyLink: "Privacy",
+    cookiesLink: "Cookies",
   },
 };
 
@@ -105,6 +118,11 @@ function saveHistory(history) {
   }
 }
 
+function getLegalPageFromHash() {
+  const page = window.location.hash.replace(/^#\//, "");
+  return ["terms", "privacy", "cookies"].includes(page) ? page : null;
+}
+
 function createSecretNumber() {
   return Math.floor(Math.random() * (MAX_NUMBER - MIN_NUMBER + 1)) + MIN_NUMBER;
 }
@@ -124,6 +142,7 @@ function App() {
   const [resultState, setResultState] = useState({ key: "" });
   const [isSuccess, setIsSuccess] = useState(false);
   const [autoResetIn, setAutoResetIn] = useState(null);
+  const [currentPage, setCurrentPage] = useState(getLegalPageFromHash);
   const [gameHistory, setGameHistory] = useState(loadHistory);
 
   const translate = (key, values = {}) => {
@@ -141,11 +160,23 @@ function App() {
 
   useEffect(() => {
     document.documentElement.lang = language;
-    document.title = `${translations[language].brand} — ${translations[language].title}`;
+    const pageTitle = currentPage ? translations[language][`${currentPage}Title`] : translations[language].title;
+    document.title = `${pageTitle} — ${translations[language].brand}`;
     document.querySelector('meta[name="description"]')?.setAttribute("content", language === "es"
       ? "Neon Guesser: un juego cyberpunk bilingüe para adivinar el número secreto."
       : "Neon Guesser: a bilingual cyberpunk game to guess the secret number.");
-  }, [language]);
+  }, [language, currentPage]);
+
+  useEffect(() => {
+    const updatePage = () => setCurrentPage(getLegalPageFromHash());
+    const toggleLanguage = () => setLanguage((currentLanguage) => (currentLanguage === "es" ? "en" : "es"));
+    window.addEventListener("hashchange", updatePage);
+    window.addEventListener("neon-guesser:toggle-language", toggleLanguage);
+    return () => {
+      window.removeEventListener("hashchange", updatePage);
+      window.removeEventListener("neon-guesser:toggle-language", toggleLanguage);
+    };
+  }, []);
 
   useEffect(() => {
     inputRef.current?.focus();
@@ -234,6 +265,10 @@ function App() {
 
   const hintText = translate(hintState.key, hintState.values);
   const resultText = translate(resultState.key, resultState.values);
+
+  if (currentPage) {
+    return <LegalPage type={currentPage} language={language} onBack={() => { window.location.hash = ""; }} />;
+  }
 
   return (
     <div className="app-shell">
@@ -350,7 +385,12 @@ function App() {
       </main>
 
       <footer>
-        <span>{translate("brand")}</span><span aria-hidden="true">•</span><span>{translate("offlineReady")}</span>
+        <div className="footer-brand"><span>{translate("brand")}</span><span aria-hidden="true">•</span><span>{translate("offlineReady")}</span></div>
+        <nav className="footer-links" aria-label={language === "es" ? "Enlaces legales" : "Legal links"}>
+          <a href="#/terms">{translate("termsLink")}</a>
+          <a href="#/privacy">{translate("privacyLink")}</a>
+          <a href="#/cookies">{translate("cookiesLink")}</a>
+        </nav>
       </footer>
     </div>
   );

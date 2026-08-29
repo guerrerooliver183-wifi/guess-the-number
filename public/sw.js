@@ -1,4 +1,4 @@
-const CACHE_NAME = "neon-guesser-v3";
+const CACHE_NAME = "neon-guesser-v4";
 const BASE_URL = "/guess-the-number/";
 const APP_SHELL = [
   BASE_URL,
