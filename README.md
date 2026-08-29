@@ -6,7 +6,8 @@ A fast, cyberpunk-inspired number guessing game built with React and Vite. Pick 
 
 ## Features
 
-- Three game modes:
+- Four game modes:
+  - **Classic:** numbers from 1 to 100 with unlimited attempts
   - **Easy:** numbers from 1 to 50 with 10 attempts
   - **Normal:** numbers from 1 to 100 with 8 attempts
   - **Hard:** numbers from 1 to 200 with 7 attempts
