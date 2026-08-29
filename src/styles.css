@@ -184,3 +184,30 @@ footer { flex-direction: column; align-items: center; }
 .legal-nav button { margin-top: 5px; color: var(--pink); cursor: pointer; border-top-color: rgba(255, 43, 214, .2); }
 @media (max-width: 720px) { .legal-container { grid-template-columns: 1fr; padding-top: 28px; } .legal-nav { position: static; grid-template-columns: repeat(4, 1fr); align-items: center; } .legal-nav a, .legal-nav button { text-align: center; } }
 @media (max-width: 520px) { .legal-container { width: min(100% - 28px, 620px); } .legal-card { padding: 25px 18px; } .legal-nav { grid-template-columns: repeat(2, 1fr); } .footer-brand { font-size: .5rem; } }
+
+/* Game modes and stats */
+.difficulty-picker { width: 100%; max-width: 560px; margin: -8px auto 25px; text-align: left; }
+.difficulty-label { display: block; margin-bottom: 9px; color: var(--muted); font-family: "Orbitron", sans-serif; font-size: .62rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
+.difficulty-options { display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; }
+.difficulty-button { min-height: 38px; padding: 7px 8px; color: var(--muted); font-family: "Orbitron", sans-serif; font-size: .58rem; font-weight: 700; letter-spacing: .04em; background: rgba(0, 245, 255, .025); border: 1px solid rgba(0, 245, 255, .22); border-radius: 8px; transition: color 180ms var(--ease-out), background 180ms var(--ease-out), border-color 180ms var(--ease-out), box-shadow 180ms var(--ease-out); }
+.difficulty-button:hover, .difficulty-button.is-active { color: var(--cyan); background: rgba(0, 245, 255, .08); border-color: var(--cyan); box-shadow: 0 0 12px rgba(0, 245, 255, .2); }
+.difficulty-button.is-active { color: var(--pink); border-color: var(--pink); box-shadow: 0 0 12px rgba(255, 43, 214, .2); }
+.history-panel { padding-top: 22px; }
+.stats-section { padding-bottom: 23px; border-bottom: 1px solid rgba(0, 245, 255, .18); }
+.stats-heading { padding-bottom: 14px; border-bottom: 0; }
+.streak-badge { display: grid; min-width: 53px; padding: 6px 8px; color: var(--pink); text-align: center; border: 1px solid rgba(255, 43, 214, .38); border-radius: 8px; background: rgba(255, 43, 214, .06); box-shadow: 0 0 14px rgba(255, 43, 214, .12); }
+.streak-badge strong { font-family: "Orbitron", sans-serif; font-size: 1.1rem; text-shadow: 0 0 8px var(--pink); }
+.streak-badge span { margin-top: 2px; color: var(--muted); font-size: .5rem; }
+.stats-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px; }
+.stat-card { display: grid; gap: 4px; padding: 10px 9px; border: 1px solid rgba(176, 38, 255, .18); border-radius: 8px; background: rgba(176, 38, 255, .035); }
+.stat-card strong { overflow: hidden; color: var(--cyan); font-family: "Orbitron", sans-serif; font-size: .92rem; text-overflow: ellipsis; white-space: nowrap; text-shadow: 0 0 7px rgba(0, 245, 255, .45); }
+.stat-card span { overflow: hidden; color: var(--muted); font-size: .54rem; text-overflow: ellipsis; white-space: nowrap; }
+.history-section { padding-top: 22px; }
+.history-section .panel-heading { padding-bottom: 14px; }
+.history-item.is-loss { border-color: rgba(255, 43, 214, .2); }
+.history-item.is-loss .history-index, .history-item.is-loss .history-secret { color: var(--pink); }
+@media (max-width: 520px) {
+  .difficulty-picker { margin-top: -3px; }
+  .difficulty-button { font-size: .54rem; }
+  .stats-grid { gap: 6px; }
+}
