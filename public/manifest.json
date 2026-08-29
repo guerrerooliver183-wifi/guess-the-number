@@ -1,0 +1,11 @@
+{
+  "name": "Guess the Number — Neon",
+  "short_name": "Neon Number",
+  "description": "Un juego Neon Cyberpunk para adivinar el número secreto.",
+  "lang": "es",
+  "start_url": "/guess-the-number/",
+  "scope": "/guess-the-number/",
+  "display": "standalone",
+  "background_color": "#05020a",
+  "theme_color": "#080012"
+}
