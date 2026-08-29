@@ -7,6 +7,7 @@ const HISTORY_STORAGE_KEY = "neon-guesser:game-history";
 const STATS_STORAGE_KEY = "neon-guesser:stats";
 
 const DIFFICULTIES = {
+  classic: { min: 1, max: 100, maxAttempts: Infinity, multiplier: 1 },
   easy: { min: 1, max: 50, maxAttempts: 10, multiplier: 1 },
   normal: { min: 1, max: 100, maxAttempts: 8, multiplier: 2 },
   hard: { min: 1, max: 200, maxAttempts: 7, multiplier: 3 },
@@ -33,7 +34,8 @@ const translations = {
     attempts: "Intentos",
     inputLabel: "Tu número",
     guess: "Adivinar",
-    inputHelp: "Tienes {maxAttempts} intentos en este nivel.",
+    inputHelp: "Tienes {attemptLimit} en este nivel.",
+    unlimitedAttempts: "Intentos ilimitados.",
     latestAttempts: "Últimos intentos",
     noAttempts: "Aún no hay intentos",
     newGame: "Nueva partida",
@@ -64,6 +66,7 @@ const translations = {
     switchLanguageBack: "Cambiar a español",
     offlineReady: "OFFLINE READY",
     difficulty: "Nivel",
+    classic: "Clásica",
     easy: "Fácil",
     normal: "Normal",
     hard: "Difícil",
@@ -93,7 +96,8 @@ const translations = {
     attempts: "Attempts",
     inputLabel: "Your number",
     guess: "Guess",
-    inputHelp: "You have {maxAttempts} attempts at this level.",
+    inputHelp: "You have {attemptLimit} at this level.",
+    unlimitedAttempts: "Unlimited attempts.",
     latestAttempts: "Latest guesses",
     noAttempts: "No guesses yet",
     newGame: "New game",
@@ -124,6 +128,7 @@ const translations = {
     switchLanguageBack: "Switch to English",
     offlineReady: "OFFLINE READY",
     difficulty: "Difficulty",
+    classic: "Classic",
     easy: "Easy",
     normal: "Normal",
     hard: "Hard",
@@ -200,7 +205,10 @@ function createHistoryId() {
 }
 
 function calculateScore(attempts, settings) {
-  return Math.max(10, (settings.maxAttempts - attempts + 1) * 25 * settings.multiplier);
+  const remainingAttempts = settings.maxAttempts === Infinity
+    ? Math.max(1, 20 - attempts)
+    : settings.maxAttempts - attempts + 1;
+  return Math.max(10, remainingAttempts * 25 * settings.multiplier);
 }
 
 function App() {
@@ -228,6 +236,7 @@ function App() {
   };
 
   const attemptLabel = (value) => translate(value === 1 ? "attempt" : "attemptsPlural");
+  const attemptLimit = settings.maxAttempts === Infinity ? translate("unlimitedAttempts") : `${settings.maxAttempts} ${translate("attemptsPlural")}`;
   const winRate = stats.played ? Math.round((stats.wins / stats.played) * 100) : 0;
   const averageAttempts = stats.wins ? (stats.totalAttempts / stats.wins).toFixed(1) : "—";
   const bestAttempts = useMemo(() => {
@@ -445,7 +454,7 @@ function App() {
             <p className="hint" aria-live="polite">{hintText}</p>
             <div className="score-row" aria-label={`${translate("attempts")}: ${attempts}`}>
               <span>{translate("attempts")}</span>
-              <strong>{String(attempts).padStart(2, "0")} / {String(settings.maxAttempts).padStart(2, "0")}</strong>
+              <strong>{String(attempts).padStart(2, "0")} / {settings.maxAttempts === Infinity ? "∞" : String(settings.maxAttempts).padStart(2, "0")}</strong>
             </div>
           </div>
 
@@ -470,7 +479,7 @@ function App() {
               />
               <button type="submit" className="primary-button" disabled={isGameOver}>{translate("guess")}</button>
             </div>
-            <small id="input-help">{translate("inputHelp", { maxAttempts: settings.maxAttempts })}</small>
+            <small id="input-help">{translate("inputHelp", { attemptLimit })}</small>
           </form>
 
           <div className="latest-guesses" aria-live="polite">
