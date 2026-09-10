@@ -44,35 +44,72 @@ jobs:
         working-directory: work
         run: npm run build
 
+      - name: Upload build artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./work/dist
+
+  deploy:
+    needs: build
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    outputs:
+      page_url: ${{ steps.deployment.outputs.page_url }}
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+  screenshot:
+    needs: deploy
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone repository into work
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git clone --branch main --single-branch \
+            "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" \
+            work
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: work/package-lock.json
+
       - name: Install Chromium for screenshot capture
         working-directory: work
         run: npx --yes playwright@1.55.0 install --with-deps chromium
 
-      - name: Start local preview server
-        working-directory: work
+      - name: Wait for deployed site
+        env:
+          DEPLOY_URL: ${{ needs.deploy.outputs.page_url }}
         run: |
-          npm run preview -- --host 127.0.0.1 --port 5173 > /tmp/neon-guesser-preview.log 2>&1 &
-          echo $! > /tmp/neon-guesser-preview.pid
-
-      - name: Wait for preview server
-        run: |
-          for attempt in {1..30}; do
-            if curl --fail --silent http://127.0.0.1:5173 > /dev/null; then
+          for attempt in {1..60}; do
+            if curl --fail --silent --location "$DEPLOY_URL" > /dev/null; then
               break
             fi
-            sleep 1
+            sleep 2
           done
-          curl --fail --silent http://127.0.0.1:5173 > /dev/null
+          curl --fail --silent --location "$DEPLOY_URL" > /dev/null
           sleep 5
 
-      - name: Replace old screenshot with new 1024x720 capture
+      - name: Replace old screenshot with deployed 1024x720 capture
         working-directory: work
+        env:
+          DEPLOY_URL: ${{ needs.deploy.outputs.page_url }}
         run: |
           mkdir -p screenshots
           rm -f screenshots/image.png
           npx --yes playwright@1.55.0 screenshot \
             --viewport-size="1024,720" \
-            http://127.0.0.1:5173 \
+            "$DEPLOY_URL" \
             screenshots/image.png
 
       - name: Commit screenshot with temporary GitHub token
@@ -89,19 +126,3 @@ jobs:
           git add screenshots/image.png
           git commit -m "chore: update generated screenshot [skip ci]"
           git push "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" HEAD:main
-
-      - name: Upload build artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: ./work/dist
-
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
