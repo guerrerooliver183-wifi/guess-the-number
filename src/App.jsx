@@ -5,6 +5,9 @@ const AUTO_RESET_SECONDS = 5;
 const HISTORY_STORAGE_KEY = "neon-guesser:game-history";
 const STATS_STORAGE_KEY = "neon-guesser:stats";
 const DIFFICULTY_STORAGE_KEY = "neon-guesser:difficulty";
+const SOURCE_DOWNLOAD_URL = "https://github.com/guerrerooliver183-wifi/guess-the-number/archive/refs/heads/main.zip";
+const LICENSE_ACCEPTED_STORAGE_KEY = "neon-guesser:source-license-accepted";
+const LICENSE_URL = "/guess-the-number/LICENSE";
 
 const DIFFICULTIES = {
   classic: { min: 1, max: 100, maxAttempts: Infinity, multiplier: 1 },
@@ -86,6 +89,11 @@ const translations = {
     privacyLink: "Privacidad",
     cookiesLink: "Cookies",
     os: "OS",
+    downloadSource: "Descargar código fuente",
+    licenseTitle: "Licencia del código fuente",
+    licenseDescription: "Revisa la licencia antes de descargar el código fuente.",
+    download: "Download",
+    cancel: "Cancel",
   },
   en: {
     brand: "NEON GUESSER",
@@ -149,6 +157,11 @@ const translations = {
     privacyLink: "Privacy",
     cookiesLink: "Cookies",
     os: "OS",
+    downloadSource: "Download Source Code",
+    licenseTitle: "Source code license",
+    licenseDescription: "Review the license before downloading the source code.",
+    download: "Download",
+    cancel: "Cancel",
   },
 };
 
@@ -163,6 +176,14 @@ function getInitialDifficulty() {
     return ["easy", "normal", "hard"].includes(savedDifficulty) ? savedDifficulty : "classic";
   } catch {
     return "classic";
+  }
+}
+
+function hasAcceptedSourceLicense() {
+  try {
+    return window.localStorage.getItem(LICENSE_ACCEPTED_STORAGE_KEY) === "true";
+  } catch {
+    return false;
   }
 }
 
@@ -261,6 +282,7 @@ function App() {
   const [currentPage, setCurrentPage] = useState(getLegalPageFromHash);
   const [gameHistory, setGameHistory] = useState(loadHistory);
   const [stats, setStats] = useState(loadStats);
+  const [isLicenseOpen, setIsLicenseOpen] = useState(false);
 
   const translate = (key, values = {}) => {
     if (!key) return "";
@@ -430,6 +452,24 @@ function App() {
     saveHistory([]);
   }
 
+  function openSourceDownload() {
+    if (hasAcceptedSourceLicense()) {
+      window.open(SOURCE_DOWNLOAD_URL, "_blank", "noopener,noreferrer");
+      return;
+    }
+    setIsLicenseOpen(true);
+  }
+
+  function downloadSourceCode() {
+    try {
+      window.localStorage.setItem(LICENSE_ACCEPTED_STORAGE_KEY, "true");
+    } catch {
+      // The download remains available when storage is disabled or unavailable.
+    }
+    setIsLicenseOpen(false);
+    window.open(SOURCE_DOWNLOAD_URL, "_blank", "noopener,noreferrer");
+  }
+
   const hintText = translate(hintState.key, hintState.values);
   const resultText = translate(resultState.key, resultState.values);
 
@@ -444,17 +484,22 @@ function App() {
           <img className="brand-icon" src="/guess-the-number/icons/icon-192.png" alt="" />
           <span>{translate("brand")}</span>
         </div>
-        <button
-          type="button"
-          className="language-switch"
-          onClick={() => setLanguage((currentLanguage) => (currentLanguage === "es" ? "en" : "es"))}
-          aria-label={language === "es" ? translate("switchLanguage") : translate("switchLanguageBack")}
-          title={translate("languageAuto")}
-        >
-          <span>{language.toUpperCase()}</span>
-          <span className="language-dot" aria-hidden="true">/</span>
-          <span>{language === "es" ? "EN" : "ES"}</span>
-        </button>
+        <div className="topbar-actions">
+          <button type="button" className="download-source-button" onClick={openSourceDownload}>
+            {translate("downloadSource")}
+          </button>
+          <button
+            type="button"
+            className="language-switch"
+            onClick={() => setLanguage((currentLanguage) => (currentLanguage === "es" ? "en" : "es"))}
+            aria-label={language === "es" ? translate("switchLanguage") : translate("switchLanguageBack")}
+            title={translate("languageAuto")}
+          >
+            <span>{language.toUpperCase()}</span>
+            <span className="language-dot" aria-hidden="true">/</span>
+            <span>{language === "es" ? "EN" : "ES"}</span>
+          </button>
+        </div>
       </header>
 
       <main className="game-container">
@@ -589,6 +634,21 @@ function App() {
           </section>
         </aside>
       </main>
+
+      {isLicenseOpen && (
+        <div className="license-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setIsLicenseOpen(false); }}>
+          <section className="license-dialog" role="dialog" aria-modal="true" aria-labelledby="license-title">
+            <p className="panel-kicker">03 // LICENSE</p>
+            <h2 id="license-title">{translate("licenseTitle")}</h2>
+            <p className="license-description">{translate("licenseDescription")}</p>
+            <iframe className="license-document" title={translate("licenseTitle")} src={LICENSE_URL} />
+            <div className="license-actions">
+              <button type="button" className="primary-button" onClick={downloadSourceCode}>{translate("download")}</button>
+              <button type="button" className="cancel-button" onClick={() => setIsLicenseOpen(false)}>{translate("cancel")}</button>
+            </div>
+          </section>
+        </div>
+      )}
 
       <footer>
         <div className="footer-brand"><span>{translate("brand")}</span><span aria-hidden="true">•</span><span>{translate("offlineReady")}</span></div>
