@@ -4,6 +4,12 @@ A fast, cyberpunk-inspired number guessing game built with React and Vite. Pick 
 
 **Play online:** [Neon Guesser on GitHub Pages](http://guerrerooliver183-wifi.github.io/guess-the-number/)
 
+## App icon and preview
+
+![Neon Guesser PWA icon](public/icons/icon-192.png)
+
+![Neon Guesser screenshot](screenshots/image.png)
+
 ## Features
 
 - Four game modes:
