@@ -1,12 +1,10 @@
-# Neon Guesser
+# <img src="public/icons/icon-192.png" alt="Neon Guesser PWA icon" width="42" height="42" align="absmiddle"> Neon Guesser
 
 A fast, cyberpunk-inspired number guessing game built with React and Vite. Pick a difficulty, find the hidden number, and build your winning streak.
 
 **Play online:** [Neon Guesser on GitHub Pages](http://guerrerooliver183-wifi.github.io/guess-the-number/)
 
-## App icon and preview
-
-![Neon Guesser PWA icon](public/icons/icon-192.png)
+## App preview
 
 ![Neon Guesser screenshot](screenshots/image.png)
 
