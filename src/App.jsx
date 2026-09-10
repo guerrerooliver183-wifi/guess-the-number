@@ -2,9 +2,9 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import LegalPage from "./LegalPage";
 
 const AUTO_RESET_SECONDS = 5;
-const DEFAULT_DIFFICULTY = "normal";
 const HISTORY_STORAGE_KEY = "neon-guesser:game-history";
 const STATS_STORAGE_KEY = "neon-guesser:stats";
+const DIFFICULTY_STORAGE_KEY = "neon-guesser:difficulty";
 
 const DIFFICULTIES = {
   classic: { min: 1, max: 100, maxAttempts: Infinity, multiplier: 1 },
@@ -85,6 +85,7 @@ const translations = {
     termsLink: "Términos",
     privacyLink: "Privacidad",
     cookiesLink: "Cookies",
+    os: "OS",
   },
   en: {
     brand: "NEON GUESSER",
@@ -147,12 +148,43 @@ const translations = {
     termsLink: "Terms",
     privacyLink: "Privacy",
     cookiesLink: "Cookies",
+    os: "OS",
   },
 };
 
 function getBrowserLanguage() {
   const browserLanguages = navigator.languages?.length ? navigator.languages : [navigator.language];
   return browserLanguages.some((language) => language?.toLowerCase().startsWith("es")) ? "es" : "en";
+}
+
+function getInitialDifficulty() {
+  try {
+    const savedDifficulty = window.localStorage.getItem(DIFFICULTY_STORAGE_KEY);
+    return ["easy", "normal", "hard"].includes(savedDifficulty) ? savedDifficulty : "classic";
+  } catch {
+    return "classic";
+  }
+}
+
+function saveDifficulty(difficulty) {
+  if (!["easy", "normal", "hard"].includes(difficulty)) return;
+  try {
+    window.localStorage.setItem(DIFFICULTY_STORAGE_KEY, difficulty);
+  } catch {
+    // The game remains usable when storage is disabled or unavailable.
+  }
+}
+
+function getOperatingSystem() {
+  const userAgent = navigator.userAgent || "";
+  const platform = navigator.userAgentData?.platform || navigator.platform || "";
+
+  if (/Android/i.test(userAgent)) return "Android";
+  if (/iPhone|iPad|iPod/i.test(userAgent) || (platform === "MacIntel" && navigator.maxTouchPoints > 1)) return "iOS";
+  if (/Windows/i.test(userAgent) || /Win/i.test(platform)) return "Windows";
+  if (/Macintosh|Mac OS X/i.test(userAgent) || /Mac/i.test(platform)) return "macOS";
+  if (/Linux/i.test(userAgent) || /Linux/i.test(platform)) return "Linux";
+  return "Unknown";
 }
 
 function loadHistory() {
@@ -214,7 +246,8 @@ function calculateScore(attempts, settings) {
 function App() {
   const inputRef = useRef(null);
   const [language, setLanguage] = useState(getBrowserLanguage);
-  const [difficulty, setDifficulty] = useState(DEFAULT_DIFFICULTY);
+  const [difficulty, setDifficulty] = useState(getInitialDifficulty);
+  const [operatingSystem] = useState(getOperatingSystem);
   const settings = DIFFICULTIES[difficulty];
   const [secretNumber, setSecretNumber] = useState(() => createSecretNumber(settings.min, settings.max));
   const [guess, setGuess] = useState("");
@@ -298,6 +331,7 @@ function App() {
 
   function changeDifficulty(nextDifficulty) {
     setDifficulty(nextDifficulty);
+    saveDifficulty(nextDifficulty);
     startNewGame(nextDifficulty);
   }
 
@@ -558,6 +592,7 @@ function App() {
 
       <footer>
         <div className="footer-brand"><span>{translate("brand")}</span><span aria-hidden="true">•</span><span>{translate("offlineReady")}</span></div>
+        <div className="footer-os">{translate("os")}: <strong>{operatingSystem}</strong></div>
         <nav className="footer-links" aria-label={language === "es" ? "Enlaces legales" : "Legal links"}>
           <a href="#/terms">{translate("termsLink")}</a>
           <a href="#/privacy">{translate("privacyLink")}</a>
