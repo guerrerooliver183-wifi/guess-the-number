@@ -133,7 +133,7 @@ h2 { margin: 0; color: var(--text); font-size: clamp(1rem, 2vw, 1.35rem); letter
 .license-dialog { width: min(100%, 680px); max-height: min(760px, calc(100vh - 48px)); overflow: hidden; padding: 27px; background: linear-gradient(145deg, rgba(20, 10, 35, .98), rgba(7, 4, 15, .98)); border: 1px solid rgba(0, 245, 255, .55); border-radius: 16px; box-shadow: 0 0 12px rgba(0, 245, 255, .35), 0 0 45px rgba(176, 38, 255, .22); animation: modal-entry 320ms var(--ease-out) both; }
 .license-dialog h2 { color: var(--text); font-size: clamp(1rem, 2vw, 1.4rem); }
 .license-description { margin: 10px 0 16px; color: var(--muted); font-size: .72rem; line-height: 1.6; }
-.license-document { display: block; width: 100%; height: min(42vh, 300px); color-scheme: dark; background: #0a0610; border: 1px solid rgba(176, 38, 255, .35); border-radius: 8px; }
+.license-document { display: block; width: 100%; height: min(42vh, 300px); overflow: auto; margin: 0; padding: 14px; color: var(--muted); font-family: "Space Mono", monospace; font-size: .62rem; line-height: 1.65; white-space: pre-wrap; background: #0a0610; border: 1px solid rgba(176, 38, 255, .35); border-radius: 8px; }
 .license-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 18px; }
 .license-actions .primary-button { min-height: 42px; padding: 0 20px; }
 .cancel-button { min-height: 42px; padding: 0 20px; color: var(--muted); font-family: "Orbitron", sans-serif; font-size: .68rem; font-weight: 700; letter-spacing: .05em; background: transparent; border: 1px solid rgba(169, 155, 181, .35); border-radius: 9px; transition: color 180ms var(--ease-out), border-color 180ms var(--ease-out), background 180ms var(--ease-out); }
