@@ -6,7 +6,6 @@ const HISTORY_STORAGE_KEY = "neon-guesser:game-history";
 const STATS_STORAGE_KEY = "neon-guesser:stats";
 const DIFFICULTY_STORAGE_KEY = "neon-guesser:difficulty";
 const SOURCE_DOWNLOAD_URL = "https://github.com/guerrerooliver183-wifi/guess-the-number/archive/refs/heads/main.zip";
-const LICENSE_ACCEPTED_STORAGE_KEY = "neon-guesser:source-license-accepted";
 const LICENSE_URL = "/guess-the-number/LICENSE";
 
 const DIFFICULTIES = {
@@ -176,14 +175,6 @@ function getInitialDifficulty() {
     return ["easy", "normal", "hard"].includes(savedDifficulty) ? savedDifficulty : "classic";
   } catch {
     return "classic";
-  }
-}
-
-function hasAcceptedSourceLicense() {
-  try {
-    return window.localStorage.getItem(LICENSE_ACCEPTED_STORAGE_KEY) === "true";
-  } catch {
-    return false;
   }
 }
 
@@ -453,19 +444,10 @@ function App() {
   }
 
   function openSourceDownload() {
-    if (hasAcceptedSourceLicense()) {
-      window.open(SOURCE_DOWNLOAD_URL, "_blank", "noopener,noreferrer");
-      return;
-    }
     setIsLicenseOpen(true);
   }
 
   function downloadSourceCode() {
-    try {
-      window.localStorage.setItem(LICENSE_ACCEPTED_STORAGE_KEY, "true");
-    } catch {
-      // The download remains available when storage is disabled or unavailable.
-    }
     setIsLicenseOpen(false);
     window.open(SOURCE_DOWNLOAD_URL, "_blank", "noopener,noreferrer");
   }
