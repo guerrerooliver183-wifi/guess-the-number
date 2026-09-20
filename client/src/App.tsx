@@ -7,14 +7,17 @@ import {
   CheckCircle2,
   ChevronRight,
   Download,
+  FileText,
   Gamepad2,
   Gauge,
   History,
   Lightbulb,
+  Languages,
   RotateCcw,
   Sparkles,
   Target,
   Trophy,
+  X,
   Wifi,
   WifiOff,
   XCircle,
@@ -76,17 +79,41 @@ function modeFor(id: ModeId) {
   return MODES.find((mode) => mode.id === id) ?? MODES[2];
 }
 
+const LANGUAGE = typeof navigator !== "undefined" && navigator.language.toLowerCase().startsWith("en") ? "en" : "es";
+
+const COPY = {
+  es: {
+    language: "ES", languageName: "Español", online: "ONLINE", offline: "SIN CONEXIÓN", install: "Instalar",
+    eyebrow: "SISTEMA DE ADIVINANZA // 01", heroTitle: "Adivina la", heroAccent: "señal", heroDescription: "{t.heroDescription}",
+    gameModes: "MODOS DE JUEGO", activeGame: "PARTIDA ACTIVA", target: "FRECUENCIA OBJETIVO", rangeHint: "El número secreto está entre 1 y 100.", synced: "Frecuencia sincronizada.", introduce: "INTRODUCE TU", prediction: "Predicción", yourNumber: "Tu número", submit: "ENVIAR", energy: "ENERGÍA DE INTENTOS", remaining: "restantes", initial: "El sistema está calibrado. ¿Puedes leer la señal?", invalid: "Introduce un número entero entre 1 y 100.", duplicate: "Ese pulso ya fue registrado. Prueba con otra frecuencia.", found: (n: number) => `Señal encontrada en ${n} ${n === 1 ? "intento" : "intentos"}.`, exhausted: (n: number) => `Se agotó la señal. El número era ${n}.`, higher: "La señal está más arriba.", lower: "La señal está más abajo.",
+    mode: "MODO", clue: "PISTA", higherShort: "MÁS ALTO", lowerShort: "MÁS BAJO", correctShort: "ACIERTO", reset: "Reiniciar", profile: "PERFIL DE JUEGO", stats: "Estadísticas", games: "PARTIDAS", total: "TOTAL", hits: "ACIERTOS", accuracy: "PRECISIÓN", streak: "RACHA", consecutive: "SEGUIDAS", best: "MEJOR", mark: "MARCA", attemptsShort: "INT.", liveTelemetry: "TELEMETRÍA EN VIVO", history: "Historial", noPulses: "Aún no hay pulsos.", historyWill: "Tu historial aparecerá aquí.", local: "REGISTRO LOCAL", events: "eventos", higherHistory: "MÁS ALTO", lowerHistory: "MÁS BAJO", hitHistory: "¡ACIERTO!", signal: "SEÑAL", stable: "ENTORNO ESTABLE", syncedStatus: "SINCRONIZADO", offlineStatus: "MODO OFFLINE", madeFor: "HECHO PARA QUIENES", readBetween: "LEEN ENTRE LÍNEAS",
+    cookies: "Cookies", privacy: "Privacidad", terms: "Términos", legalTitle: { cookies: "Uso de cookies", privacy: "Privacidad", terms: "Términos de uso" }, legalBody: { cookies: "Neon Guesser usa almacenamiento local para recordar tus estadísticas y preferencias en este dispositivo. No utilizamos cookies de seguimiento ni vendemos datos.", privacy: "Tus partidas y estadísticas se guardan únicamente en el almacenamiento local de tu navegador. No enviamos tus predicciones a un servidor.", terms: "Neon Guesser es un juego recreativo. Al usarlo aceptas que las estadísticas locales pueden borrarse al limpiar los datos del navegador.", }, legalClose: "Cerrar",
+    modes: { classic: { name: "Clásico", subtitle: "Sin límite" }, easy: { name: "Fácil", subtitle: "10 intentos" }, normal: { name: "Normal", subtitle: "8 intentos" }, hard: { name: "Difícil", subtitle: "7 intentos" } },
+  },
+  en: {
+    language: "EN", languageName: "English", online: "ONLINE", offline: "OFFLINE", install: "Install",
+    eyebrow: "GUESSING SYSTEM // 01", heroTitle: "Guess the", heroAccent: "signal", heroDescription: "One number. One hundred possibilities. Pick your level, follow the clues, and find the right frequency.",
+    gameModes: "GAME MODES", activeGame: "ACTIVE GAME", target: "TARGET FREQUENCY", rangeHint: "The secret number is between 1 and 100.", synced: "Frequency synchronized.", introduce: "ENTER YOUR", prediction: "Prediction", yourNumber: "Your number", submit: "SUBMIT", energy: "ATTEMPT ENERGY", remaining: "remaining", initial: "System calibrated. Can you read the signal?", invalid: "Enter a whole number between 1 and 100.", duplicate: "That pulse is already logged. Try a different frequency.", found: (n: number) => `Signal found in ${n} ${n === 1 ? "attempt" : "attempts"}.`, exhausted: (n: number) => `Signal depleted. The number was ${n}.`, higher: "The signal is higher.", lower: "The signal is lower.",
+    mode: "MODE", clue: "CLUE", higherShort: "HIGHER", lowerShort: "LOWER", correctShort: "HIT", reset: "Reset", profile: "PLAYER PROFILE", stats: "Statistics", games: "GAMES", total: "TOTAL", hits: "HITS", accuracy: "ACCURACY", streak: "STREAK", consecutive: "IN A ROW", best: "BEST", mark: "MARK", attemptsShort: "ATT.", liveTelemetry: "LIVE TELEMETRY", history: "History", noPulses: "No pulses yet.", historyWill: "Your history will appear here.", local: "LOCAL LOG", events: "events", higherHistory: "HIGHER", lowerHistory: "LOWER", hitHistory: "HIT!", signal: "SIGNAL", stable: "STABLE ENVIRONMENT", syncedStatus: "SYNCED", offlineStatus: "OFFLINE MODE", madeFor: "MADE FOR THOSE WHO", readBetween: "READ BETWEEN LINES",
+    cookies: "Cookies", privacy: "Privacy", terms: "Terms", legalTitle: { cookies: "Cookie use", privacy: "Privacy", terms: "Terms of use" }, legalBody: { cookies: "Neon Guesser uses local storage to remember your statistics and preferences on this device. We do not use tracking cookies or sell data.", privacy: "Your games and statistics are stored only in your browser's local storage. We do not send your predictions to a server.", terms: "Neon Guesser is a recreational game. By using it, you accept that local statistics may be erased when browser data is cleared.", }, legalClose: "Close",
+    modes: { classic: { name: "Classic", subtitle: "No limit" }, easy: { name: "Easy", subtitle: "10 attempts" }, normal: { name: "Normal", subtitle: "8 attempts" }, hard: { name: "Hard", subtitle: "7 attempts" } },
+  },
+} as const;
+
+type LegalSection = "cookies" | "privacy" | "terms";
+
 function App() {
+  const t = COPY[LANGUAGE];
   const [modeId, setModeId] = useState<ModeId>("normal");
   const [secret, setSecret] = useState(() => Math.floor(Math.random() * 100) + 1);
   const [guess, setGuess] = useState("");
   const [attempts, setAttempts] = useState<Attempt[]>([]);
   const [completed, setCompleted] = useState(false);
-  const [message, setMessage] = useState("El sistema está calibrado. ¿Puedes leer la señal?");
+  const [message, setMessage] = useState<string>(t.initial);
   const [isOnline, setIsOnline] = useState(() => navigator.onLine);
   const [stats, setStats] = useState<SavedStats>(loadStats);
   const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null);
-
+  const [legalSection, setLegalSection] = useState<LegalSection | null>(null);
   const mode = modeFor(modeId);
   const attemptsLeft = mode.attempts === null ? null : Math.max(mode.attempts - attempts.length, 0);
   const progress = mode.attempts === null ? 0 : Math.min((attempts.length / mode.attempts) * 100, 100);
@@ -95,9 +122,11 @@ function App() {
   const lastAttempt = attempts[0];
 
   const accuracy = stats.games ? Math.round((stats.wins / stats.games) * 100) : 0;
-  const currentModeLabel = mode.name.toUpperCase();
+  const currentModeLabel = t.modes[modeId].name.toUpperCase();
 
   useEffect(() => {
+    document.documentElement.lang = LANGUAGE;
+    document.title = LANGUAGE === "en" ? "Neon Guesser — Guess the signal" : "Neon Guesser — Adivina la señal";
     const onOnline = () => setIsOnline(true);
     const onOffline = () => setIsOnline(false);
     const onInstall = (event: Event) => {
@@ -131,7 +160,7 @@ function App() {
     setGuess("");
     setAttempts([]);
     setCompleted(false);
-    setMessage("El sistema está calibrado. ¿Puedes leer la señal?");
+    setMessage(t.initial);
   }
 
   function selectMode(nextMode: ModeId) {
@@ -164,12 +193,12 @@ function App() {
     const numericGuess = Number(guess);
 
     if (!Number.isInteger(numericGuess) || numericGuess < 1 || numericGuess > 100) {
-      setMessage("Introduce un número entero entre 1 y 100.");
+      setMessage(t.invalid);
       return;
     }
 
     if (attempts.some((attempt) => attempt.guess === numericGuess)) {
-      setMessage("Ese pulso ya fue registrado. Prueba con otra frecuencia.");
+      setMessage(t.duplicate);
       return;
     }
 
@@ -182,7 +211,7 @@ function App() {
 
     if (result === "correct") {
       setCompleted(true);
-      setMessage(`Señal encontrada en ${nextAttempts.length} ${nextAttempts.length === 1 ? "intento" : "intentos"}.`);
+      setMessage(t.found(nextAttempts.length));
       saveResult(true, nextAttempts.length);
       return;
     }
@@ -190,13 +219,13 @@ function App() {
     const outOfAttempts = mode.attempts !== null && nextAttempts.length >= mode.attempts;
     if (outOfAttempts) {
       setCompleted(true);
-      setMessage(`Se agotó la señal. El número era ${secret}.`);
+      setMessage(t.exhausted(secret));
       setAttempts((current) => [...current, { id: Date.now() + 1, guess: secret, result: "miss", delta: 0 }]);
       saveResult(false, nextAttempts.length);
       return;
     }
 
-    setMessage(numericGuess < secret ? "La señal está más arriba." : "La señal está más abajo.");
+    setMessage(numericGuess < secret ? t.higher : t.lower);
   }
 
   async function installApp() {
@@ -209,10 +238,13 @@ function App() {
     <div className="app-shell">
       <div className="ambient ambient-one" />
       <div className="ambient ambient-two" />
+      <div className="ambient ambient-three" />
+      <div className="ambient ambient-four" />
       <div className="grid-overlay" />
+      <div className="scanline" />
 
       <header className="topbar">
-        <a className="brand" href="#game" aria-label="Neon Guesser inicio">
+        <a className="brand" href="#game" aria-label="Neon Guesser home">
           <span className="brand-mark"><Zap size={17} strokeWidth={2.8} /></span>
           <span>
             <strong>NEON</strong>
@@ -222,11 +254,11 @@ function App() {
         <div className="topbar-actions">
           <div className={`connection-chip ${isOnline ? "online" : "offline"}`}>
             {isOnline ? <Wifi size={14} /> : <WifiOff size={14} />}
-            <span>{isOnline ? "ONLINE" : "OFFLINE"}</span>
+            <span>{isOnline ? t.online : t.offline}</span>
           </div>
           {installPrompt && (
             <button className="install-button" onClick={installApp} type="button">
-              <Download size={15} /> Instalar
+              <Download size={15} /> {t.install}
             </button>
           )}
         </div>
@@ -234,13 +266,13 @@ function App() {
 
       <main className="main-content" id="game">
         <section className="intro-block reveal-up">
-          <div className="eyebrow"><span className="eyebrow-line" /> SISTEMA DE ADIVINANZA // 01</div>
-          <h1>Adivina la <span>señal</span>.</h1>
-          <p>Un número. Cien posibilidades. Elige tu nivel, sigue las pistas y encuentra la frecuencia correcta.</p>
+          <div className="eyebrow"><span className="eyebrow-line" /> {t.eyebrow}</div>
+          <h1>{t.heroTitle} <span>{t.heroAccent}</span>.</h1>
+          <p>{t.heroDescription}</p>
         </section>
 
-        <section className="mode-strip reveal-up" aria-label="Modos de juego">
-          <div className="strip-label"><Gamepad2 size={15} /> MODO DE JUEGO</div>
+        <section className="mode-strip reveal-up" aria-label={t.gameModes}>
+          <div className="strip-label"><Gamepad2 size={15} /> {t.gameModes}</div>
           <div className="mode-list">
             {MODES.map((item) => (
               <button
@@ -250,7 +282,7 @@ function App() {
                 onClick={() => selectMode(item.id)}
               >
                 <span className="mode-dot" />
-                <span className="mode-copy"><strong>{item.name}</strong><small>{item.subtitle}</small></span>
+                <span className="mode-copy"><strong>{t.modes[item.id].name}</strong><small>{t.modes[item.id].subtitle}</small></span>
                 {modeId === item.id && <Check size={15} className="mode-check" />}
               </button>
             ))}
@@ -260,30 +292,30 @@ function App() {
         <div className="workspace">
           <section className={`game-card mode-${mode.accent} reveal-up`}>
             <div className="card-topline">
-              <div className="live-label"><span className="live-dot" /> PARTIDA ACTIVA</div>
+              <div className="live-label"><span className="live-dot" /> {t.activeGame}</div>
               <div className="round-label">RND. 0{Math.min(attempts.length + 1, 9)} / 10</div>
             </div>
 
             <div className="game-card-body">
               <div className="signal-column">
-                <div className="signal-label">FRECUENCIA OBJETIVO</div>
+                <div className="signal-label">{t.target}</div>
                 <div className={`signal-number ${isWin ? "found" : ""}`} aria-live="polite">
                   {isWin ? secret : "?"}
                 </div>
                 <div className="signal-range"><span>01</span><i /><span>100</span></div>
                 <p className="signal-hint">
                   <Lightbulb size={15} />
-                  {isWin ? "Frecuencia sincronizada." : "El número secreto está entre 1 y 100."}
+                  {isWin ? t.synced : t.rangeHint}
                 </p>
               </div>
 
               <div className="input-column">
                 <div className="input-heading">
-                  <div><span className="mini-kicker">INTRODUCE TU</span><h2>Predicción</h2></div>
+                  <div><span className="mini-kicker">{t.introduce}</span><h2>{t.prediction}</h2></div>
                   <div className="attempt-counter"><span>{attempts.length.toString().padStart(2, "0")}</span> / {mode.attempts ?? "∞"}</div>
                 </div>
                 <form onSubmit={handleGuess} className="guess-form">
-                  <label htmlFor="guess">Tu número</label>
+                  <label htmlFor="guess">{t.yourNumber}</label>
                   <div className="input-row">
                     <input
                       id="guess"
@@ -297,7 +329,7 @@ function App() {
                       autoComplete="off"
                     />
                     <button className="submit-button" type="submit" disabled={!canPlay}>
-                      <span>ENVIAR</span><ChevronRight size={19} />
+                      <span>{t.submit}</span><ChevronRight size={19} />
                     </button>
                   </div>
                 </form>
@@ -306,56 +338,74 @@ function App() {
                   <span>{message}</span>
                 </div>
                 <div className="progress-area">
-                  <div className="progress-meta"><span>ENERGÍA DE INTENTOS</span><strong>{attemptsLeft === null ? "∞" : `${attemptsLeft} restantes`}</strong></div>
+                  <div className="progress-meta"><span>{t.energy}</span><strong>{attemptsLeft === null ? "∞" : `${attemptsLeft} ${t.remaining}`}</strong></div>
                   <div className="progress-track"><div className="progress-fill" style={{ width: `${mode.attempts === null ? 26 : Math.max(progress, 4)}%` }} /></div>
                 </div>
               </div>
             </div>
 
             <div className="game-footer">
-              <div><span className="footer-key">MODO</span><strong>{currentModeLabel}</strong></div>
-              <div><span className="footer-key">PISTA</span><strong>{lastAttempt ? (lastAttempt.result === "low" ? "MÁS ALTO" : lastAttempt.result === "high" ? "MÁS BAJO" : lastAttempt.result === "correct" ? "ACIERTO" : "—") : "—"}</strong></div>
-              <button type="button" onClick={resetGame} className="reset-button"><RotateCcw size={14} /> Reiniciar</button>
+              <div><span className="footer-key">{t.mode}</span><strong>{currentModeLabel}</strong></div>
+              <div><span className="footer-key">{t.clue}</span><strong>{lastAttempt ? (lastAttempt.result === "low" ? t.higherShort : lastAttempt.result === "high" ? t.lowerShort : lastAttempt.result === "correct" ? t.correctShort : "—") : "—"}</strong></div>
+              <button type="button" onClick={resetGame} className="reset-button"><RotateCcw size={14} /> {t.reset}</button>
             </div>
           </section>
 
           <aside className="side-column">
-            <section className="stats-card reveal-up" aria-label="Estadísticas">
-              <div className="section-heading"><div><span className="mini-kicker">PERFIL DE JUEGO</span><h3>Estadísticas</h3></div><BarChart3 size={18} /></div>
+            <section className="stats-card reveal-up" aria-label={t.stats}>
+              <div className="section-heading"><div><span className="mini-kicker">{t.profile}</span><h3>{t.stats}</h3></div><BarChart3 size={18} /></div>
               <div className="stat-grid">
-                <div className="stat-box"><span>PARTIDAS</span><strong>{stats.games.toString().padStart(2, "0")}</strong><small>TOTAL</small></div>
-                <div className="stat-box accent-lime"><span>ACIERTOS</span><strong>{accuracy}<small>%</small></strong><small>PRECISIÓN</small></div>
-                <div className="stat-box accent-violet"><span>RACHA</span><strong>{stats.streak.toString().padStart(2, "0")}</strong><small>SEGUIDAS</small></div>
-                <div className="stat-box accent-cyan"><span>MEJOR</span><strong>{stats.bestAttempts ?? "—"}<small>{stats.bestAttempts ? " INT." : ""}</small></strong><small>MARCA</small></div>
+                <div className="stat-box"><span>{t.games}</span><strong>{stats.games.toString().padStart(2, "0")}</strong><small>{t.total}</small></div>
+                <div className="stat-box accent-lime"><span>{t.hits}</span><strong>{accuracy}<small>%</small></strong><small>{t.accuracy}</small></div>
+                <div className="stat-box accent-violet"><span>{t.streak}</span><strong>{stats.streak.toString().padStart(2, "0")}</strong><small>{t.consecutive}</small></div>
+                <div className="stat-box accent-cyan"><span>{t.best}</span><strong>{stats.bestAttempts ?? "—"}<small>{stats.bestAttempts ? ` ${t.attemptsShort}` : ""}</small></strong><small>{t.mark}</small></div>
               </div>
             </section>
 
-            <section className="history-card reveal-up" aria-label="Historial de intentos">
-              <div className="section-heading"><div><span className="mini-kicker">TELEMETRÍA EN VIVO</span><h3>Historial</h3></div><History size={18} /></div>
+            <section className="history-card reveal-up" aria-label={t.history}>
+              <div className="section-heading"><div><span className="mini-kicker">{t.liveTelemetry}</span><h3>{t.history}</h3></div><History size={18} /></div>
               {recentSignal.length === 0 ? (
-                <div className="empty-history"><Target size={22} /><span>Aún no hay pulsos.<br />Tu historial aparecerá aquí.</span></div>
+                <div className="empty-history"><Target size={22} /><span>{t.noPulses}<br />{t.historyWill}</span></div>
               ) : (
                 <div className="history-list">
                   {recentSignal.map((attempt, index) => (
                     <div className={`history-row ${attempt.result}`} key={attempt.id}>
                       <span className="history-index">{(attempts.length - index).toString().padStart(2, "0")}</span>
                       <strong>{attempt.guess.toString().padStart(2, "0")}</strong>
-                      <span className="history-direction">{attempt.result === "low" ? <><ArrowUpRight size={14} /> MÁS ALTO</> : attempt.result === "high" ? <><ArrowDownRight size={14} /> MÁS BAJO</> : attempt.result === "correct" ? <><Trophy size={13} /> ¡ACIERTO!</> : "SEÑAL"}</span>
+                      <span className="history-direction">{attempt.result === "low" ? <><ArrowUpRight size={14} /> {t.higherHistory}</> : attempt.result === "high" ? <><ArrowDownRight size={14} /> {t.lowerHistory}</> : attempt.result === "correct" ? <><Trophy size={13} /> {t.hitHistory}</> : t.signal}</span>
                       <span className="history-delta">{attempt.result === "correct" || attempt.result === "miss" ? "—" : `±${attempt.delta}`}</span>
                     </div>
                   ))}
                 </div>
               )}
-              <div className="history-footer"><span><span className="pulse-dot" /> REGISTRO LOCAL</span><span>{attempts.length} eventos</span></div>
+              <div className="history-footer"><span><span className="pulse-dot" /> {t.local}</span><span>{attempts.length} {t.events}</span></div>
             </section>
           </aside>
         </div>
 
         <footer className="page-footer reveal-up">
           <span>NEON GUESSER <b>v1.0.0</b></span>
-          <span className="footer-center"><Gauge size={14} /> ENTORNO ESTABLE · {isOnline ? "SINCRONIZADO" : "MODO OFFLINE"}</span>
-          <span>HECHO PARA QUIENES <b>LEEN ENTRE LÍNEAS</b></span>
+          <span className="footer-center"><Gauge size={14} /> {t.stable} · {isOnline ? t.syncedStatus : t.offlineStatus}</span>
+          <span>{t.madeFor} <b>{t.readBetween}</b></span>
+          <div className="legal-links" aria-label="Legal information">
+            <Languages size={13} />
+            <span className="language-badge">{t.language} · {t.languageName}</span>
+            <button type="button" onClick={() => setLegalSection("cookies")}>{t.cookies}</button>
+            <button type="button" onClick={() => setLegalSection("privacy")}>{t.privacy}</button>
+            <button type="button" onClick={() => setLegalSection("terms")}>{t.terms}</button>
+          </div>
         </footer>
+
+        {legalSection && (
+          <div className="legal-backdrop" role="dialog" aria-modal="true" aria-labelledby="legal-title" onClick={() => setLegalSection(null)}>
+            <section className="legal-modal" onClick={(event) => event.stopPropagation()}>
+              <div className="legal-modal-top"><span className="mini-kicker">NEON GUESSER // {t.language}</span><button className="legal-close" type="button" onClick={() => setLegalSection(null)} aria-label={t.legalClose}><X size={18} /></button></div>
+              <h2 id="legal-title">{t.legalTitle[legalSection]}</h2>
+              <p>{t.legalBody[legalSection]}</p>
+              <button className="legal-confirm" type="button" onClick={() => setLegalSection(null)}>{t.legalClose}</button>
+            </section>
+          </div>
+        )}
       </main>
     </div>
   );
