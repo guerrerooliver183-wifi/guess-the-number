@@ -3,6 +3,7 @@ import {
   ArrowDownRight,
   ArrowUpRight,
   BarChart3,
+  CalendarDays,
   Check,
   CheckCircle2,
   ChevronRight,
@@ -52,9 +53,9 @@ type SavedStats = {
 };
 
 const MODES: Mode[] = [
-  { id: "classic", name: "Clásico", subtitle: "Sin límite", attempts: null, accent: "violet" },
-  { id: "easy", name: "Fácil", subtitle: "10 intentos", attempts: 10, accent: "cyan" },
-  { id: "normal", name: "Normal", subtitle: "8 intentos", attempts: 8, accent: "lime" },
+  { id: "classic", name: "Clásico", subtitle: "Sin límite", attempts: null, accent: "magenta" },
+  { id: "easy", name: "Fácil", subtitle: "10 intentos", attempts: 10, accent: "lime" },
+  { id: "normal", name: "Normal", subtitle: "8 intentos", attempts: 8, accent: "yellow" },
   { id: "hard", name: "Difícil", subtitle: "7 intentos", attempts: 7, accent: "orange" },
 ];
 
@@ -65,6 +66,32 @@ const DEFAULT_STATS: SavedStats = {
   streak: 0,
   lastMode: null,
 };
+
+type GameRecord = {
+  id: string;
+  attempts: number;
+  mode: ModeId;
+  timestamp: string;
+  won: boolean;
+};
+
+function loadSelectedMode(): ModeId {
+  try {
+    const saved = localStorage.getItem("neon-guesser-mode-v1") as ModeId | null;
+    return saved && MODES.some((mode) => mode.id === saved) ? saved : "classic";
+  } catch {
+    return "classic";
+  }
+}
+
+function loadGameHistory(): GameRecord[] {
+  try {
+    const saved = localStorage.getItem("neon-guesser-game-history-v1");
+    return saved ? JSON.parse(saved) : [];
+  } catch {
+    return [];
+  }
+}
 
 function loadStats(): SavedStats {
   try {
@@ -84,9 +111,9 @@ const LANGUAGE = typeof navigator !== "undefined" && navigator.language.toLowerC
 const COPY = {
   es: {
     language: "ES", languageName: "Español", online: "ONLINE", offline: "SIN CONEXIÓN", install: "Instalar",
-    eyebrow: "SISTEMA DE ADIVINANZA // 01", heroTitle: "Adivina la", heroAccent: "señal", heroDescription: "{t.heroDescription}",
+    eyebrow: "SISTEMA DE ADIVINANZA // 01", heroTitle: "Adivina la", heroAccent: "señal", heroDescription: "Un número. Cien posibilidades. Elige tu nivel, sigue las pistas y encuentra la frecuencia correcta.",
     gameModes: "MODOS DE JUEGO", activeGame: "PARTIDA ACTIVA", target: "FRECUENCIA OBJETIVO", rangeHint: "El número secreto está entre 1 y 100.", synced: "Frecuencia sincronizada.", introduce: "INTRODUCE TU", prediction: "Predicción", yourNumber: "Tu número", submit: "ENVIAR", energy: "ENERGÍA DE INTENTOS", remaining: "restantes", initial: "El sistema está calibrado. ¿Puedes leer la señal?", invalid: "Introduce un número entero entre 1 y 100.", duplicate: "Ese pulso ya fue registrado. Prueba con otra frecuencia.", found: (n: number) => `Señal encontrada en ${n} ${n === 1 ? "intento" : "intentos"}.`, exhausted: (n: number) => `Se agotó la señal. El número era ${n}.`, higher: "La señal está más arriba.", lower: "La señal está más abajo.",
-    mode: "MODO", clue: "PISTA", higherShort: "MÁS ALTO", lowerShort: "MÁS BAJO", correctShort: "ACIERTO", reset: "Reiniciar", profile: "PERFIL DE JUEGO", stats: "Estadísticas", games: "PARTIDAS", total: "TOTAL", hits: "ACIERTOS", accuracy: "PRECISIÓN", streak: "RACHA", consecutive: "SEGUIDAS", best: "MEJOR", mark: "MARCA", attemptsShort: "INT.", liveTelemetry: "TELEMETRÍA EN VIVO", history: "Historial", noPulses: "Aún no hay pulsos.", historyWill: "Tu historial aparecerá aquí.", local: "REGISTRO LOCAL", events: "eventos", higherHistory: "MÁS ALTO", lowerHistory: "MÁS BAJO", hitHistory: "¡ACIERTO!", signal: "SEÑAL", stable: "ENTORNO ESTABLE", syncedStatus: "SINCRONIZADO", offlineStatus: "MODO OFFLINE", madeFor: "HECHO PARA QUIENES", readBetween: "LEEN ENTRE LÍNEAS",
+    mode: "MODO", clue: "PISTA", higherShort: "MÁS ALTO", lowerShort: "MÁS BAJO", correctShort: "ACIERTO", reset: "Reiniciar", profile: "PERFIL DE JUEGO", stats: "Estadísticas", games: "PARTIDAS", total: "TOTAL", hits: "ACIERTOS", accuracy: "PRECISIÓN", streak: "RACHA", consecutive: "SEGUIDAS", best: "MEJOR", mark: "MARCA", attemptsShort: "INT.", liveTelemetry: "TELEMETRÍA EN VIVO", history: "Historial", noPulses: "Aún no hay pulsos.", historyWill: "Tu historial aparecerá aquí.", local: "REGISTRO LOCAL", events: "eventos", higherHistory: "MÁS ALTO", lowerHistory: "MÁS BAJO", hitHistory: "¡ACIERTO!", signal: "SEÑAL", stable: "ENTORNO ESTABLE", archive: "PARTIDAS GUARDADAS", noGames: "Aún no hay partidas terminadas.", attemptsLabel: "intentos", dateLabel: "fecha", won: "GANADA", lost: "PERDIDA", syncedStatus: "SINCRONIZADO", offlineStatus: "MODO OFFLINE", madeFor: "HECHO PARA QUIENES", readBetween: "LEEN ENTRE LÍNEAS",
     cookies: "Cookies", privacy: "Privacidad", terms: "Términos", legalTitle: { cookies: "Uso de cookies", privacy: "Privacidad", terms: "Términos de uso" }, legalBody: { cookies: "Neon Guesser usa almacenamiento local para recordar tus estadísticas y preferencias en este dispositivo. No utilizamos cookies de seguimiento ni vendemos datos.", privacy: "Tus partidas y estadísticas se guardan únicamente en el almacenamiento local de tu navegador. No enviamos tus predicciones a un servidor.", terms: "Neon Guesser es un juego recreativo. Al usarlo aceptas que las estadísticas locales pueden borrarse al limpiar los datos del navegador.", }, legalClose: "Cerrar",
     modes: { classic: { name: "Clásico", subtitle: "Sin límite" }, easy: { name: "Fácil", subtitle: "10 intentos" }, normal: { name: "Normal", subtitle: "8 intentos" }, hard: { name: "Difícil", subtitle: "7 intentos" } },
   },
@@ -94,7 +121,7 @@ const COPY = {
     language: "EN", languageName: "English", online: "ONLINE", offline: "OFFLINE", install: "Install",
     eyebrow: "GUESSING SYSTEM // 01", heroTitle: "Guess the", heroAccent: "signal", heroDescription: "One number. One hundred possibilities. Pick your level, follow the clues, and find the right frequency.",
     gameModes: "GAME MODES", activeGame: "ACTIVE GAME", target: "TARGET FREQUENCY", rangeHint: "The secret number is between 1 and 100.", synced: "Frequency synchronized.", introduce: "ENTER YOUR", prediction: "Prediction", yourNumber: "Your number", submit: "SUBMIT", energy: "ATTEMPT ENERGY", remaining: "remaining", initial: "System calibrated. Can you read the signal?", invalid: "Enter a whole number between 1 and 100.", duplicate: "That pulse is already logged. Try a different frequency.", found: (n: number) => `Signal found in ${n} ${n === 1 ? "attempt" : "attempts"}.`, exhausted: (n: number) => `Signal depleted. The number was ${n}.`, higher: "The signal is higher.", lower: "The signal is lower.",
-    mode: "MODE", clue: "CLUE", higherShort: "HIGHER", lowerShort: "LOWER", correctShort: "HIT", reset: "Reset", profile: "PLAYER PROFILE", stats: "Statistics", games: "GAMES", total: "TOTAL", hits: "HITS", accuracy: "ACCURACY", streak: "STREAK", consecutive: "IN A ROW", best: "BEST", mark: "MARK", attemptsShort: "ATT.", liveTelemetry: "LIVE TELEMETRY", history: "History", noPulses: "No pulses yet.", historyWill: "Your history will appear here.", local: "LOCAL LOG", events: "events", higherHistory: "HIGHER", lowerHistory: "LOWER", hitHistory: "HIT!", signal: "SIGNAL", stable: "STABLE ENVIRONMENT", syncedStatus: "SYNCED", offlineStatus: "OFFLINE MODE", madeFor: "MADE FOR THOSE WHO", readBetween: "READ BETWEEN LINES",
+    mode: "MODE", clue: "CLUE", higherShort: "HIGHER", lowerShort: "LOWER", correctShort: "HIT", reset: "Reset", profile: "PLAYER PROFILE", stats: "Statistics", games: "GAMES", total: "TOTAL", hits: "HITS", accuracy: "ACCURACY", streak: "STREAK", consecutive: "IN A ROW", best: "BEST", mark: "MARK", attemptsShort: "ATT.", liveTelemetry: "LIVE TELEMETRY", history: "History", noPulses: "No pulses yet.", historyWill: "Your history will appear here.", local: "LOCAL LOG", events: "events", higherHistory: "HIGHER", lowerHistory: "LOWER", hitHistory: "HIT!", signal: "SIGNAL", stable: "STABLE ENVIRONMENT", archive: "SAVED GAMES", noGames: "No completed games yet.", attemptsLabel: "attempts", dateLabel: "date", won: "WON", lost: "LOST", syncedStatus: "SYNCED", offlineStatus: "OFFLINE MODE", madeFor: "MADE FOR THOSE WHO", readBetween: "READ BETWEEN LINES",
     cookies: "Cookies", privacy: "Privacy", terms: "Terms", legalTitle: { cookies: "Cookie use", privacy: "Privacy", terms: "Terms of use" }, legalBody: { cookies: "Neon Guesser uses local storage to remember your statistics and preferences on this device. We do not use tracking cookies or sell data.", privacy: "Your games and statistics are stored only in your browser's local storage. We do not send your predictions to a server.", terms: "Neon Guesser is a recreational game. By using it, you accept that local statistics may be erased when browser data is cleared.", }, legalClose: "Close",
     modes: { classic: { name: "Classic", subtitle: "No limit" }, easy: { name: "Easy", subtitle: "10 attempts" }, normal: { name: "Normal", subtitle: "8 attempts" }, hard: { name: "Hard", subtitle: "7 attempts" } },
   },
@@ -104,7 +131,7 @@ type LegalSection = "cookies" | "privacy" | "terms";
 
 function App() {
   const t = COPY[LANGUAGE];
-  const [modeId, setModeId] = useState<ModeId>("normal");
+  const [modeId, setModeId] = useState<ModeId>(loadSelectedMode);
   const [secret, setSecret] = useState(() => Math.floor(Math.random() * 100) + 1);
   const [guess, setGuess] = useState("");
   const [attempts, setAttempts] = useState<Attempt[]>([]);
@@ -114,6 +141,7 @@ function App() {
   const [stats, setStats] = useState<SavedStats>(loadStats);
   const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [legalSection, setLegalSection] = useState<LegalSection | null>(null);
+  const [gameHistory, setGameHistory] = useState<GameRecord[]>(loadGameHistory);
   const mode = modeFor(modeId);
   const attemptsLeft = mode.attempts === null ? null : Math.max(mode.attempts - attempts.length, 0);
   const progress = mode.attempts === null ? 0 : Math.min((attempts.length / mode.attempts) * 100, 100);
@@ -165,6 +193,30 @@ function App() {
 
   function selectMode(nextMode: ModeId) {
     setModeId(nextMode);
+    try {
+      localStorage.setItem("neon-guesser-mode-v1", nextMode);
+    } catch {
+      // Persistence is best-effort for private browsing.
+    }
+  }
+
+  function saveGameRecord(win: boolean, usedAttempts: number) {
+    const record: GameRecord = {
+      id: `${Date.now()}-${modeId}`,
+      attempts: usedAttempts,
+      mode: modeId,
+      timestamp: new Date().toISOString(),
+      won: win,
+    };
+    setGameHistory((previous) => {
+      const next = [record, ...previous].slice(0, 50);
+      try {
+        localStorage.setItem("neon-guesser-game-history-v1", JSON.stringify(next));
+      } catch {
+        // Persistence is best-effort for private browsing.
+      }
+      return next;
+    });
   }
 
   function saveResult(win: boolean, usedAttempts: number) {
@@ -213,6 +265,7 @@ function App() {
       setCompleted(true);
       setMessage(t.found(nextAttempts.length));
       saveResult(true, nextAttempts.length);
+      saveGameRecord(true, nextAttempts.length);
       return;
     }
 
@@ -222,6 +275,7 @@ function App() {
       setMessage(t.exhausted(secret));
       setAttempts((current) => [...current, { id: Date.now() + 1, guess: secret, result: "miss", delta: 0 }]);
       saveResult(false, nextAttempts.length);
+      saveGameRecord(false, nextAttempts.length);
       return;
     }
 
@@ -379,6 +433,26 @@ function App() {
                 </div>
               )}
               <div className="history-footer"><span><span className="pulse-dot" /> {t.local}</span><span>{attempts.length} {t.events}</span></div>
+            </section>
+
+            <section className="archive-card reveal-up" aria-label={t.archive}>
+              <div className="section-heading"><div><span className="mini-kicker">{t.archive}</span><h3>{t.history}</h3></div><CalendarDays size={18} /></div>
+              {gameHistory.length === 0 ? (
+                <div className="archive-empty">{t.noGames}</div>
+              ) : (
+                <div className="archive-list">
+                  {gameHistory.slice(0, 6).map((record) => {
+                    const date = new Intl.DateTimeFormat(LANGUAGE === "en" ? "en-US" : "es-ES", { year: "numeric", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" }).format(new Date(record.timestamp));
+                    return (
+                      <div className="archive-row" key={record.id}>
+                        <div className={`archive-status ${record.won ? "won" : "lost"}`}>{record.won ? "✓" : "×"}</div>
+                        <div className="archive-main"><strong>{t.modes[record.mode].name}</strong><span>{record.attempts} {t.attemptsLabel}</span></div>
+                        <div className="archive-meta"><b>{record.won ? t.won : t.lost}</b><span>{date}</span></div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
             </section>
           </aside>
         </div>
