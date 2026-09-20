@@ -286,3 +286,95 @@ h1 span { -webkit-text-stroke: 1px var(--neon-cyan); text-shadow: 0 0 12px var(-
   .submit-button { flex-basis: 108px; width: auto; }
   .page-footer > span:last-of-type { grid-column: 1 / -1; text-align: center; margin-top: 8px; }
 }
+
+/* Reference polish: space-field backdrop, colorful control panels and luminous accents. */
+.app-shell {
+  background:
+    radial-gradient(ellipse at 82% 15%, rgba(255, 25, 209, .32), transparent 25rem),
+    radial-gradient(ellipse at 9% 88%, rgba(129, 255, 36, .22), transparent 20rem),
+    radial-gradient(ellipse at 48% 52%, rgba(18, 95, 255, .14), transparent 32rem),
+    linear-gradient(135deg, #030817 0%, #080c24 42%, #12051d 100%);
+}
+.app-shell::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: .7;
+  background-image:
+    radial-gradient(circle at 7% 22%, rgba(34,246,255,.95) 0 1px, transparent 2px),
+    radial-gradient(circle at 18% 68%, rgba(255,43,214,.9) 0 1px, transparent 2px),
+    radial-gradient(circle at 31% 14%, rgba(200,255,61,.9) 0 1px, transparent 2px),
+    radial-gradient(circle at 45% 78%, rgba(77,124,255,.9) 0 1px, transparent 2px),
+    radial-gradient(circle at 61% 25%, rgba(255,43,214,.85) 0 1.5px, transparent 2px),
+    radial-gradient(circle at 76% 63%, rgba(34,246,255,.9) 0 1px, transparent 2px),
+    radial-gradient(circle at 91% 38%, rgba(200,255,61,.9) 0 1px, transparent 2px);
+  background-size: 190px 170px, 230px 210px, 280px 240px, 210px 190px, 320px 260px, 250px 220px, 180px 200px;
+  animation: starfield-drift 24s linear infinite;
+}
+.grid-overlay { opacity: .42; background-size: 44px 44px; }
+.scanline { opacity: .12; background: repeating-linear-gradient(0deg, transparent 0, transparent 4px, rgba(34,246,255,.15) 5px); }
+.ambient-one { opacity: .34; }
+.ambient-two { opacity: .3; }
+.ambient-three { opacity: .2; }
+.ambient-four { opacity: .22; }
+
+.intro-block { position: relative; }
+.intro-block::after {
+  content: "✦  ·  +  ◇  ·  ✧";
+  position: absolute;
+  top: -12px;
+  right: -2rem;
+  color: var(--neon-cyan);
+  font: 700 18px/1 Orbitron, sans-serif;
+  letter-spacing: .8rem;
+  text-shadow: 0 0 8px var(--neon-cyan), 0 0 20px var(--neon-pink);
+  animation: constellation-pulse 3s ease-in-out infinite;
+}
+h1 { text-shadow: 0 0 20px rgba(255,255,255,.16), 0 0 55px rgba(34,246,255,.16); }
+h1 span { color: transparent; -webkit-text-stroke: 1px var(--neon-cyan); background: linear-gradient(90deg, var(--neon-cyan), #fff, var(--neon-pink)); background-clip: text; -webkit-background-clip: text; text-shadow: 0 0 14px var(--neon-cyan), 0 0 34px var(--neon-pink); }
+.intro-block > p { color: #b9c1d4; }
+
+.mode-strip { position: relative; background: linear-gradient(90deg, rgba(5,18,49,.55), rgba(61,5,56,.25)); }
+.mode-strip::before { content: ""; position: absolute; top: -1px; left: 4%; right: 4%; height: 1px; background: linear-gradient(90deg, transparent, var(--neon-cyan), var(--neon-pink), transparent); box-shadow: 0 0 13px var(--neon-cyan); }
+.mode-button { border-color: rgba(77,124,255,.25); background: rgba(4,12,36,.42); }
+.mode-button:nth-child(1) { --mode-glow: var(--neon-pink); }
+.mode-button:nth-child(2) { --mode-glow: var(--neon-lime); }
+.mode-button:nth-child(3) { --mode-glow: var(--neon-cyan); }
+.mode-button:nth-child(4) { --mode-glow: #ff72f1; }
+.mode-button:hover, .mode-button.active { border-color: var(--mode-glow); box-shadow: inset 3px 0 0 var(--mode-glow), 0 0 20px color-mix(in srgb, var(--mode-glow) 38%, transparent); }
+.mode-button.active .mode-dot { background: var(--mode-glow); box-shadow: 0 0 8px var(--mode-glow), 0 0 18px var(--mode-glow); }
+
+.game-card, .stats-card, .history-card, .archive-card { position: relative; overflow: hidden; border-color: rgba(34,246,255,.5); }
+.game-card::after, .stats-card::before, .history-card::before, .archive-card::before {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+  inset: 0;
+  opacity: .55;
+  background: linear-gradient(115deg, transparent 0 42%, rgba(34,246,255,.1) 48%, transparent 54%), radial-gradient(circle at 98% 0%, rgba(255,43,214,.2), transparent 20rem);
+  background-size: 220% 100%, 100% 100%;
+  animation: panel-scan 9s linear infinite;
+}
+.game-card > *, .stats-card > *, .history-card > *, .archive-card > * { position: relative; z-index: 1; }
+.stats-card, .history-card, .archive-card { box-shadow: 0 0 0 1px rgba(77,124,255,.12), 0 0 25px rgba(77,124,255,.14), 0 20px 60px rgba(0,0,0,.45); }
+.section-heading h3, .input-heading h2 { text-shadow: 0 0 10px rgba(34,246,255,.25); }
+.stat-box { border-color: rgba(77,124,255,.3); background: linear-gradient(135deg, rgba(15,30,70,.45), rgba(44,6,56,.2)); box-shadow: inset 0 0 18px rgba(34,246,255,.04); }
+.stat-box:hover { border-color: var(--neon-cyan); box-shadow: inset 0 0 22px rgba(34,246,255,.1), 0 0 16px rgba(34,246,255,.18); }
+.stat-box.accent-violet strong { color: var(--neon-pink); text-shadow: 0 0 12px var(--neon-pink); }
+.stat-box.accent-cyan strong, .stat-box.accent-lime strong { text-shadow: 0 0 12px currentColor; }
+.history-card .pulse-dot { background: var(--neon-lime); box-shadow: 0 0 8px var(--neon-lime), 0 0 18px var(--neon-lime); }
+.history-row { border-bottom-color: rgba(34,246,255,.16); }
+.archive-status.won { box-shadow: 0 0 10px var(--neon-lime), 0 0 24px rgba(34,246,255,.4); }
+.page-footer { color: #8c98b2; background: linear-gradient(90deg, rgba(7,17,44,.35), transparent, rgba(44,5,54,.35)); }
+
+@keyframes starfield-drift { to { background-position: 190px -170px, -230px 210px, 280px -240px, -210px 190px, 320px -260px, -250px 220px, 180px -200px; } }
+@keyframes constellation-pulse { 0%, 100% { opacity: .4; transform: translateY(0) rotate(-2deg); } 50% { opacity: 1; transform: translateY(5px) rotate(2deg); } }
+@keyframes panel-scan { 0% { background-position: -180% 0, 0 0; } 100% { background-position: 180% 0, 0 0; } }
+
+@media (max-width: 700px) {
+  .intro-block::after { top: -1.5rem; right: 0; font-size: 12px; letter-spacing: .45rem; }
+  .app-shell::before { opacity: .52; }
+  .mode-strip::before { left: 0; right: 0; }
+}
