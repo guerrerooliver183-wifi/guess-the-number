@@ -106,7 +106,20 @@ function modeFor(id: ModeId) {
   return MODES.find((mode) => mode.id === id) ?? MODES[2];
 }
 
-const LANGUAGE = typeof navigator !== "undefined" && navigator.language.toLowerCase().startsWith("en") ? "en" : "es";
+function loadLanguage(): "es" | "en" {
+  try {
+    const saved = localStorage.getItem("neon-guesser-language");
+    if (saved === "en" || saved === "es") return saved;
+  } catch {
+    // Language preference is best-effort.
+  }
+
+  // Spanish is the product default; the browser locale must not unexpectedly
+  // switch the UI to English in a Spanish deployment or preview.
+  return "es";
+}
+
+const LANGUAGE = loadLanguage();
 
 const COPY = {
   es: {
@@ -273,7 +286,6 @@ function App() {
     if (outOfAttempts) {
       setCompleted(true);
       setMessage(t.exhausted(secret));
-      setAttempts((current) => [...current, { id: Date.now() + 1, guess: secret, result: "miss", delta: 0 }]);
       saveResult(false, nextAttempts.length);
       saveGameRecord(false, nextAttempts.length);
       return;
