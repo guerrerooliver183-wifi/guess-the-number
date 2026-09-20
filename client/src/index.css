@@ -375,6 +375,27 @@ h1 span { color: transparent; -webkit-text-stroke: 1px var(--neon-cyan); backgro
 
 @media (max-width: 700px) {
   .intro-block::after { top: -1.5rem; right: 0; font-size: 12px; letter-spacing: .45rem; }
-  .app-shell::before { opacity: .52; }
+  .app-shell::before {
+    opacity: .28;
+    background-size: 330px 300px, 410px 360px, 480px 420px, 370px 330px, 520px 430px, 430px 380px, 340px 360px;
+    animation-duration: 38s;
+  }
+  .app-shell::after {
+    opacity: .42;
+    background-size: 220px 220px, 300px 300px, 260px 260px;
+    animation-duration: 32s;
+  }
+  .ambient {
+    width: 19rem;
+    height: 19rem;
+    filter: blur(92px);
+    opacity: .12;
+  }
+  .ambient-one { right: -10rem; animation-duration: 18s; }
+  .ambient-two { left: -10rem; animation-duration: 21s; }
+  .ambient-three { left: 48%; opacity: .07; animation-duration: 24s; }
+  .ambient-four { left: -12rem; opacity: .08; animation-duration: 27s; }
+  .grid-overlay { opacity: .25; background-size: 58px 58px; }
+  .scanline { opacity: .06; animation-duration: 12s; }
   .mode-strip::before { left: 0; right: 0; }
 }
