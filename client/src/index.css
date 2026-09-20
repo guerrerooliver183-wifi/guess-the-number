@@ -391,10 +391,10 @@ h1 span { color: transparent; -webkit-text-stroke: 1px var(--neon-cyan); backgro
     filter: blur(92px);
     opacity: .12;
   }
-  .ambient-one { right: -10rem; animation-duration: 18s; }
-  .ambient-two { left: -10rem; animation-duration: 21s; }
-  .ambient-three { left: 48%; opacity: .07; animation-duration: 24s; }
-  .ambient-four { left: -12rem; opacity: .08; animation-duration: 27s; }
+  .ambient-one { top: 3rem; right: -16rem; width: 20rem; height: 20rem; animation-duration: 22s; }
+  .ambient-two { bottom: -17rem; left: -16rem; width: 20rem; height: 20rem; animation-duration: 25s; }
+  .ambient-three { top: 54%; left: 86%; width: 14rem; height: 14rem; opacity: .035; animation-duration: 30s; }
+  .ambient-four { top: 28%; left: -17rem; width: 16rem; height: 16rem; opacity: .045; animation-duration: 33s; }
   .grid-overlay { opacity: .25; background-size: 58px 58px; }
   .scanline { opacity: .06; animation-duration: 12s; }
   .mode-strip::before { left: 0; right: 0; }
