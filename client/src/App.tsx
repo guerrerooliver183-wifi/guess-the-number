@@ -180,7 +180,7 @@ function App() {
     window.addEventListener("beforeinstallprompt", onInstall);
 
     if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.register("/service-worker.js").catch(() => undefined);
+      navigator.serviceWorker.register(`${import.meta.env.BASE_URL}service-worker.js`).catch(() => undefined);
     }
 
     return () => {

@@ -1,5 +1,11 @@
-const CACHE_NAME = "neon-guesser-v1";
-const APP_SHELL = ["/", "/index.html", "/manifest.json", "/neon-icon.svg"];
+const CACHE_NAME = "neon-guesser-v2";
+const BASE_PATH = new URL("./", self.location).pathname;
+const APP_SHELL = [
+  BASE_PATH,
+  `${BASE_PATH}index.html`,
+  `${BASE_PATH}manifest.json`,
+  `${BASE_PATH}neon-icon.svg`,
+];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(APP_SHELL)));
@@ -25,7 +31,7 @@ self.addEventListener("fetch", (event) => {
           }
           return response;
         })
-        .catch(() => cached || caches.match("/index.html"));
+        .catch(() => cached || caches.match(`${BASE_PATH}index.html`));
       return cached || network;
     })
   );
