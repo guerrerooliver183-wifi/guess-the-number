@@ -280,3 +280,205 @@ button:focus-visible, input:focus-visible { outline: 2px solid var(--mode-accent
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: 0.001ms !important; }
 }
+
+
+/* Neon color boost */
+:root {
+  --neon-cyan: #00e5ff;
+  --neon-magenta: #ff2e97;
+  --neon-green: #b7ff00;
+  --neon-yellow: #ffe600;
+  --neon-purple: #a855f7;
+}
+
+.app-shell {
+  background:
+    radial-gradient(ellipse 55% 40% at 85% 8%, rgba(0, 229, 255, 0.16), transparent 65%),
+    radial-gradient(ellipse 48% 38% at 8% 38%, rgba(255, 46, 151, 0.15), transparent 65%),
+    radial-gradient(ellipse 42% 32% at 52% 92%, rgba(183, 255, 0, 0.08), transparent 68%),
+    #050713;
+}
+
+.app-shell::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, transparent 49.8%, rgba(0, 229, 255, 0.035) 50%, transparent 50.2%),
+    linear-gradient(0deg, transparent 49.8%, rgba(255, 46, 151, 0.035) 50%, transparent 50.2%);
+  background-size: 92px 92px;
+  mask-image: linear-gradient(to bottom, rgba(0,0,0,.85), transparent 90%);
+}
+
+.grid-overlay {
+  opacity: 0.42;
+  background-image:
+    linear-gradient(rgba(0, 229, 255, 0.065) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 46, 151, 0.055) 1px, transparent 1px);
+  background-size: 46px 46px;
+}
+
+.ambient-one {
+  left: -12rem;
+  background: #ff2e97;
+  opacity: 0.22;
+}
+
+.ambient-two {
+  right: -10rem;
+  background: #00e5ff;
+  opacity: 0.2;
+}
+
+.hero-copy h1 {
+  text-shadow: 0 0 2px rgba(255,255,255,.9), 0 0 18px rgba(0,229,255,.08);
+}
+
+.hero-copy h1 span {
+  color: var(--neon-cyan);
+  text-shadow:
+    0 0 2px #fff,
+    0 0 8px var(--neon-cyan),
+    0 0 24px rgba(0,229,255,.72),
+    0 0 48px rgba(255,46,151,.28);
+}
+
+.eyebrow {
+  color: var(--neon-green);
+  text-shadow: 0 0 10px rgba(183,255,0,.45);
+}
+
+.game-panel,
+.stats-card,
+.history-card {
+  background:
+    linear-gradient(145deg, rgba(16, 23, 47, 0.98), rgba(6, 10, 24, 0.96));
+  border-color: rgba(0, 229, 255, 0.2);
+  box-shadow:
+    0 0 2px rgba(0,229,255,.25),
+    0 0 22px rgba(0,229,255,.07),
+    0 24px 80px rgba(0,0,0,.42);
+}
+
+.game-panel {
+  border-top-color: rgba(var(--mode-glow), .9);
+  box-shadow:
+    0 0 2px rgba(var(--mode-glow), .5),
+    0 0 26px rgba(var(--mode-glow), .13),
+    0 24px 80px rgba(0,0,0,.42);
+}
+
+.mode-card {
+  background: rgba(5, 9, 22, .72);
+  border-color: rgba(0,229,255,.14);
+  box-shadow: inset 0 0 18px rgba(0,229,255,.018);
+}
+
+.mode-card:hover {
+  box-shadow:
+    0 0 5px rgba(var(--card-glow),.35),
+    0 0 22px rgba(var(--card-glow),.15);
+}
+
+.mode-card.selected {
+  box-shadow:
+    0 0 3px rgba(var(--card-glow),.8),
+    0 0 14px rgba(var(--card-glow),.28),
+    0 0 34px rgba(var(--card-glow),.12),
+    inset 0 0 24px rgba(var(--card-glow),.08);
+}
+
+.secret-node {
+  border-color: rgba(var(--mode-glow), .72);
+  background:
+    radial-gradient(circle, rgba(var(--mode-glow), .23) 0%, rgba(8, 14, 31, .95) 56%, rgba(8, 14, 31, .2) 59%, transparent 73%);
+  box-shadow:
+    0 0 4px rgba(var(--mode-glow), .65),
+    0 0 26px rgba(var(--mode-glow), .28),
+    0 0 58px rgba(var(--mode-glow), .12),
+    inset 0 0 34px rgba(var(--mode-glow), .16);
+}
+
+.secret-node strong {
+  text-shadow:
+    0 0 2px #fff,
+    0 0 10px var(--mode-accent),
+    0 0 28px rgba(var(--mode-glow), .75);
+}
+
+.status-icon {
+  box-shadow: 0 0 14px rgba(var(--mode-glow), .18);
+}
+
+.guess-button {
+  box-shadow:
+    0 0 3px rgba(var(--mode-glow), .9),
+    0 0 14px rgba(var(--mode-glow), .5),
+    0 0 30px rgba(var(--mode-glow), .22);
+}
+
+.guess-button:hover,
+.accept-button:hover,
+.dialog-action:hover {
+  box-shadow:
+    0 0 4px rgba(var(--mode-glow), 1),
+    0 0 18px rgba(var(--mode-glow), .65),
+    0 0 38px rgba(var(--mode-glow), .3);
+}
+
+.meter-track {
+  background: rgba(0,229,255,.1);
+  box-shadow: inset 0 0 8px rgba(0,229,255,.08);
+}
+
+.meter-track span {
+  box-shadow:
+    0 0 4px var(--mode-accent),
+    0 0 14px rgba(var(--mode-glow), .7),
+    0 0 28px rgba(var(--mode-glow), .25);
+}
+
+.stats-card {
+  border-top-color: rgba(0,229,255,.5);
+}
+
+.stats-card .rail-heading svg {
+  color: var(--neon-cyan);
+  filter: drop-shadow(0 0 7px rgba(0,229,255,.7));
+}
+
+.history-card {
+  border-top-color: rgba(255,46,151,.55);
+}
+
+.history-card .rail-heading svg {
+  color: var(--neon-magenta);
+  filter: drop-shadow(0 0 7px rgba(255,46,151,.65));
+}
+
+.stat-cell b {
+  text-shadow: 0 0 12px rgba(0,229,255,.18);
+}
+
+.source-code-button {
+  color: var(--neon-cyan);
+  text-shadow: 0 0 9px rgba(0,229,255,.45);
+}
+
+.source-code-button:hover {
+  color: #fff;
+  text-shadow:
+    0 0 3px #fff,
+    0 0 10px var(--neon-cyan),
+    0 0 22px rgba(0,229,255,.7);
+}
+
+.cookie-banner {
+  border-color: rgba(183,255,0,.42);
+  box-shadow:
+    0 0 3px rgba(183,255,0,.25),
+    0 0 24px rgba(183,255,0,.1),
+    0 18px 45px rgba(0,0,0,.5);
+}
