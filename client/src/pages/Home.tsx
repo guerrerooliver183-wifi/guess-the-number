@@ -10,6 +10,7 @@ import {
   CircleHelp,
   Clock3,
   Gamepad2,
+  Github,
   History,
   Languages,
   Lightbulb,
@@ -108,6 +109,7 @@ const copy = {
     privacy: "Privacy",
     terms: "Terms",
     cookies: "Cookies",
+    sourceCode: "Source Code",
     footerLine: "A tiny game for big hunches.",
     cookieTitle: "Local-first cookies",
     cookieBody: "Neon Guesser uses local storage to remember your mode, stats and history. No tracking pixels. No account required.",
@@ -182,6 +184,7 @@ const copy = {
     privacy: "Privacidad",
     terms: "Términos",
     cookies: "Cookies",
+    sourceCode: "Código fuente",
     footerLine: "Un juego pequeño para grandes corazonadas.",
     cookieTitle: "Cookies locales",
     cookieBody: "Neon Guesser usa almacenamiento local para recordar tu modo, estadísticas e historial. Sin píxeles de seguimiento. Sin cuenta.",
@@ -506,6 +509,10 @@ export default function Home() {
         <div className="footer-brand"><span className="brand-mark small"><Gamepad2 size={14} /></span><span>NEON GUESSER</span><small>© 2026</small></div>
         <span className="footer-line">{labels.footerLine}</span>
         <nav className="legal-nav" aria-label="Legal">
+          <a className="source-code-button" href="https://github.com/guerrerooliver183-wifi/guess-the-number" target="_blank" rel="noreferrer">
+            <Github size={14} />
+            {labels.sourceCode}
+          </a>
           <button onClick={() => setLegalDoc("cookies")}>{labels.cookies}</button>
           <button onClick={() => setLegalDoc("privacy")}>{labels.privacy}</button>
           <button onClick={() => setLegalDoc("terms")}>{labels.terms}</button>
