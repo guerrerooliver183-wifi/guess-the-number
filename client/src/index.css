@@ -484,7 +484,6 @@ button:focus-visible, input:focus-visible { outline: 2px solid var(--mode-accent
 }
 
 
-
 /* Neon polish: richer color, depth and glow */
 .app-shell {
   background:
@@ -759,5 +758,145 @@ button:focus-visible, input:focus-visible { outline: 2px solid var(--mode-accent
   100% {
     transform: translate3d(-5rem, 2rem, 0) scale(1.15);
     opacity: 0.28;
+  }
+}
+
+
+/* Neon hover for interactive buttons */
+.language-button,
+.icon-button,
+.mode-card,
+.guess-button,
+.accept-button,
+.dialog-action,
+.dialog-close,
+.legal-nav button,
+.text-button {
+  transition:
+    transform 180ms var(--ease-out),
+    color 180ms var(--ease-out),
+    background 180ms var(--ease-out),
+    border-color 180ms var(--ease-out),
+    box-shadow 180ms var(--ease-out),
+    filter 180ms var(--ease-out);
+}
+
+.language-button:hover {
+  color: #ffffff;
+  border-color: rgba(183, 255, 0, 0.72);
+  background: rgba(183, 255, 0, 0.08);
+  box-shadow:
+    0 0 4px rgba(183, 255, 0, 0.65),
+    0 0 16px rgba(183, 255, 0, 0.28),
+    inset 0 0 12px rgba(183, 255, 0, 0.08);
+  text-shadow: 0 0 10px rgba(183, 255, 0, 0.8);
+  transform: translateY(-2px);
+}
+
+.icon-button:hover {
+  color: #ffffff;
+  border-color: rgba(var(--mode-glow), 0.85);
+  background: rgba(var(--mode-glow), 0.12);
+  box-shadow:
+    0 0 4px rgba(var(--mode-glow), 0.8),
+    0 0 18px rgba(var(--mode-glow), 0.42),
+    inset 0 0 12px rgba(var(--mode-glow), 0.08);
+  filter: drop-shadow(0 0 7px rgba(var(--mode-glow), 0.65));
+  transform: translateY(-2px) rotate(-10deg);
+}
+
+.mode-card:hover {
+  color: #ffffff;
+  border-color: rgba(var(--card-glow), 0.9);
+  background: linear-gradient(135deg, rgba(var(--card-glow), 0.15), rgba(255,255,255,0.035));
+  box-shadow:
+    0 0 4px rgba(var(--card-glow), 0.75),
+    0 0 18px rgba(var(--card-glow), 0.35),
+    0 0 34px rgba(var(--card-glow), 0.16),
+    inset 0 0 18px rgba(var(--card-glow), 0.07);
+  transform: translateY(-3px);
+}
+
+.guess-button:hover,
+.accept-button:hover,
+.dialog-action:hover {
+  color: #02030a;
+  filter: brightness(1.16) saturate(1.12);
+  box-shadow:
+    0 0 5px rgba(var(--mode-glow), 1),
+    0 0 20px rgba(var(--mode-glow), 0.82),
+    0 0 46px rgba(var(--mode-glow), 0.38),
+    inset 0 0 10px rgba(255,255,255,0.25);
+  transform: translateY(-3px) scale(1.015);
+}
+
+.dialog-close:hover {
+  color: #ffffff;
+  border-color: rgba(var(--mode-glow), 0.7);
+  background: rgba(var(--mode-glow), 0.1);
+  box-shadow:
+    0 0 4px rgba(var(--mode-glow), 0.7),
+    0 0 16px rgba(var(--mode-glow), 0.35);
+  filter: drop-shadow(0 0 6px rgba(var(--mode-glow), 0.55));
+  transform: translateY(-2px) rotate(8deg);
+}
+
+.legal-nav button:hover,
+.text-button:hover {
+  color: #ffffff;
+  text-shadow:
+    0 0 4px #ffffff,
+    0 0 10px var(--mode-accent),
+    0 0 20px rgba(var(--mode-glow), 0.7);
+  filter: drop-shadow(0 0 5px rgba(var(--mode-glow), 0.45));
+  transform: translateY(-1px);
+}
+
+.source-code-button {
+  transition:
+    color 180ms var(--ease-out),
+    transform 180ms var(--ease-out),
+    text-shadow 180ms var(--ease-out),
+    filter 180ms var(--ease-out);
+}
+
+.source-code-button:hover {
+  color: #ffffff;
+  text-shadow:
+    0 0 3px #ffffff,
+    0 0 10px #00f5ff,
+    0 0 24px rgba(0,245,255,.85),
+    0 0 38px rgba(255,43,214,.35);
+  filter: drop-shadow(0 0 7px rgba(0,245,255,.7));
+  transform: translateY(-2px);
+}
+
+.guess-button:disabled,
+.accept-button:disabled,
+.dialog-action:disabled {
+  cursor: not-allowed;
+  filter: saturate(0.45);
+  box-shadow: none;
+  transform: none;
+}
+
+.guess-button:active,
+.accept-button:active,
+.dialog-action:active {
+  transform: translateY(0) scale(0.97);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .language-button:hover,
+  .icon-button:hover,
+  .mode-card:hover,
+  .guess-button:hover,
+  .accept-button:hover,
+  .dialog-action:hover,
+  .dialog-close:hover,
+  .legal-nav button:hover,
+  .text-button:hover,
+  .source-code-button:hover {
+    transform: none;
   }
 }
