@@ -83,6 +83,7 @@ const copy = {
     unlimited: "unlimited",
     makeGuess: "Make your guess",
     guessPlaceholder: "Enter a number",
+    noInput: "No input",
     lockGuess: "Lock guess",
     higher: "Go higher",
     lower: "Go lower",
@@ -158,6 +159,7 @@ const copy = {
     unlimited: "ilimitados",
     makeGuess: "Haz tu intento",
     guessPlaceholder: "Escribe un número",
+    noInput: "No input",
     lockGuess: "Fijar intento",
     higher: "Más alto",
     lower: "Más bajo",
@@ -314,6 +316,10 @@ export default function Home() {
 
   const submitGuess = () => {
     if (status !== "playing") return;
+    if (guess.trim() === "") {
+      setMessage(labels.noInput);
+      return;
+    }
     const value = Number(guess);
     if (!Number.isInteger(value) || value < 1 || value > 100) {
       setMessage(labels.range);
